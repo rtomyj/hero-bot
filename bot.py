@@ -1,7 +1,8 @@
-# bot.py
 import os
+import threading
 
 import discord
+from discord.ext import commands
 from dotenv import load_dotenv
 import requests
 
@@ -9,6 +10,7 @@ load_dotenv()
 token = os.getenv('DISCORD_TOKEN')
 
 client = discord.Client()
+bot = commands.Bot(command_prefix='!')
 
 def get_headers():
 	return {
@@ -48,9 +50,69 @@ async def on_message(message):
 
 		response = r.json()[0]
 
+		hotstreak = ''
 		if response['hotStreak'] == True:
 			hotstreak = 'You are on fire right now! Keep the win streak up.'
 
 		await message.channel.send(f'**Rank:** {response["tier"]}-{response["rank"]} {response["leaguePoints"]}LP\n**Wins:** {response["wins"]}\n**Losses:** {response["losses"]}\n{hotstreak}')
 
-client.run(token)
+
+def get_ranked_results(username, userId):
+	r = requests.get(f'https://na1.api.riotgames.com/lol/league/v4/entries/by-summoner/{userId}'
+	, headers = get_headers())
+
+	response = r.json()[0]
+
+
+	hotstreak = ''
+	if response['hotStreak'] == True:
+		hotstreak = 'You are on fire right now! Keep the win streak up.'
+
+	return f'Solo Queue Ranked stats for ***{username}***\n**Rank:** {response["tier"]}-{response["rank"]} {response["leaguePoints"]}LP\n**Wins:** {response["wins"]}\n**Losses:** {response["losses"]}\n{hotstreak}'
+
+
+@bot.command(name='rank-solo', help='List stats for solo rank - add username after command.')
+async def rank_solo(context, *usernameTokens):
+	username = ''
+
+	for token in usernameTokens:
+		if username == '':
+			username += token
+		else:
+			username += f' {token}'
+
+	urlFriendlyUsername = username.replace(' ', '%20')
+	url = f'https://na1.api.riotgames.com/lol/summoner/v4/summoners/by-name/{ urlFriendlyUsername }'
+	r = requests.get(url, headers = get_headers())
+	response = r.json()
+
+	try:
+		userId = response['id']
+	except:
+		await context.send(f'***{username}*** is not registered with Rito.')
+		return
+
+
+	try:
+		await context.send(get_ranked_results(username, userId))
+	except:
+		await context.send(f'***{username}*** has not played a ranked game this season.')
+
+
+
+from flask import Flask
+app = Flask(__name__)
+
+@app.route('/testcall')
+def test():
+	return 'API up and running'
+
+if __name__ == '__main__':
+
+	port = int(os.getenv('PORT', 8081))
+	host = '0.0.0.0'
+
+	threading.Thread( target=app.run, args=(), kwargs={'host': host, 'port': port} ).start()
+
+
+	bot.run(token)
