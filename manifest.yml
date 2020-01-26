@@ -1,0 +1,11 @@
+applications:
+- name: league-discord-api
+  instances: 1
+  disk_quota: 300M
+  memory: 40M
+  routes:
+  - route: lol-discord-bot.cfapps.io
+  buildpacks:
+  - https://github.com/cloudfoundry/python-buildpack.git
+  command: python bot.py
+  path: .
