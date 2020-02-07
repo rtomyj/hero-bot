@@ -7,5 +7,5 @@ applications:
   - route: lol-discord-bot.cfapps.io
   buildpacks:
   - https://github.com/cloudfoundry/python-buildpack.git
-  command: python bot.py
+  command: python app/bot.py
   path: .
