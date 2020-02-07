@@ -39,18 +39,33 @@ async def on_member_join(member):
 	await member.dm_channel.send(f'Hey {member.display_name}! {formality} I am a bot for {member.guild}')
 
 
-def get_ranked_results(username, userId):
+def get_ranked_results(username, userId, request):
+	REQUEST_maps_QUEUE_TYPE = {'solo': 'RANKED_SOLO_5x5', 'flex': 'RANKED_FLEX_SR'}
+
 	r = requests.get(f'https://na1.api.riotgames.com/lol/league/v4/entries/by-summoner/{userId}'
 	, headers = get_headers())
 
-	response = r.json()[0]
 
+
+	foundRankRecord = None
+	for rankedQueueInfo in r.json():
+		if rankedQueueInfo['queueType'] == REQUEST_maps_QUEUE_TYPE[request]:
+			foundRankRecord = rankedQueueInfo
+
+	if foundRankRecord == None:
+		raise Exception('No ranked data found for solo queue')
 
 	hotstreak = ''
-	if response['hotStreak'] == True:
+	if foundRankRecord['hotStreak'] == True:
 		hotstreak = 'You are on fire right now! Keep the win streak up.'
 
-	return f'Solo/Duo Queue Ranked stats for ***{username}***\n**Rank:** {response["tier"]}-{response["rank"]} {response["leaguePoints"]}LP\n**Wins:** {response["wins"]}\n**Losses:** {response["losses"]}\n{hotstreak}'
+	soloRankRecordEmbed = Embed(color=Colour.from_rgb(224, 17, 95), title=f'Solo/Duo Rank Queue Stats For { username }')
+	soloRankRecordEmbed.add_field(name='Current Rank', value=f'{ foundRankRecord["tier"] } { foundRankRecord["rank"] } {foundRankRecord["leaguePoints"]}LP', inline=False)
+	soloRankRecordEmbed.add_field(name='Total Wins', value=f'{ foundRankRecord["wins"] }', inline=True)
+	soloRankRecordEmbed.add_field(name='Total Losses', value=f'{ foundRankRecord["losses"] }', inline=True)
+	soloRankRecordEmbed.add_field(name='Win/Loss Ratio', value=f'{ float(int(foundRankRecord["wins"]) / (int(foundRankRecord["wins"]) + int(foundRankRecord["losses"]))) }', inline=True)
+
+	return soloRankRecordEmbed
 
 
 def parse_username_tokens(usernameTokens):
@@ -80,9 +95,9 @@ async def rank_solo(context, *usernameTokens):
 
 		try:
 			print(f'Sending {username} their rank results.')
-			await context.send(get_ranked_results(username, userId))
+			await context.send( embed=get_ranked_results(username, userId, 'solo') )
 			return
-		except IndexError:
+		except Exception:
 			print(f'Error retreiving {username} rank results.')
 			await context.send(f'{username} does not have Solo/Duo Rank games.')
 			return
