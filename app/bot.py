@@ -8,15 +8,17 @@ from dotenv import load_dotenv
 import requests
 from flask import Flask
 
-from league_api_calls import match_info, api_commons, ranked_info
+from helper import api_commons
+from cogs.ranked_info import RankedInfo
 
 ### Setup for annotations and env vars ###
 load_dotenv()
 discordApiToken = os.getenv('DISCORD_TOKEN')
 
 bot = commands.Bot(command_prefix='!')
-app = Flask(__name__)
+bot.add_cog( RankedInfo(bot) )
 
+app = Flask(__name__)
 
 
 @bot.event
