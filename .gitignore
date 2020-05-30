@@ -6,4 +6,4 @@ settings.json
 
 ### Python
 **/__pycache__/**
-*.pyc
+**/.pyc
