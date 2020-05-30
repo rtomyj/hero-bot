@@ -2,3 +2,8 @@
 
 ### VSCode ###
 settings.json
+
+
+### Python
+**/__pycache__/**
+*.pyc
