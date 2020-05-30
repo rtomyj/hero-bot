@@ -80,4 +80,5 @@ class MatchInfo(commands.Cog):
 		matchMessage.add_field(name='Score', value=f'{ embedMatchData["kills"] }/{ embedMatchData["deaths"] }/{ embedMatchData["assists"] }', inline=True)
 		matchMessage.add_field(name='KDA', value=float( int(embedMatchData["kills"]) / int(embedMatchData["deaths"]) ))
 
+		print(f'Sending {username} their stats for the last game they played.')
 		await context.send(embed=matchMessage)
