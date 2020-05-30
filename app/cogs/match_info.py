@@ -1,5 +1,9 @@
 import requests
+from requests.exceptions import HTTPError
+
 from helper.api_commons import get_headers, parse_username_tokens
+from helper.riot_abstractions import get_account_info_using_summoner_name
+from helper.riot_api_constants import MATCH_HISTORY_URL
 from discord import Embed, Colour
 from discord.ext import commands
 
@@ -7,19 +11,12 @@ from typing import Dict
 
 
 def get_match_history(username, urlFriendlyUsername):
-	url = f'https://na1.api.riotgames.com/lol/summoner/v4/summoners/by-name/{ urlFriendlyUsername }'
-
-	r = requests.get(url, headers=get_headers())
-	json = r.json()
-
 	try:
-		accountId = json['accountId']
-		url = f'https://na1.api.riotgames.com/lol/match/v4/matchlists/by-account/{ accountId }'
+		accountId = get_account_info_using_summoner_name(urlFriendlyUsername)
 
-		r = requests.get(url, headers=get_headers())
+		r = requests.get(MATCH_HISTORY_URL.format(accountId = accountId), headers=get_headers())
 		return r.json()['matches']
-
-	except KeyError as exception:
+	except HTTPError as e:
 		if r.status_code == 403:
 			print('Riot API has expired.')
 			return

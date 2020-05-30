@@ -1,0 +1,2 @@
+SUMMONER_INFO_URL = 'https://na1.api.riotgames.com/lol/summoner/v4/summoners/by-name/{urlFriendlyUsername}'
+MATCH_HISTORY_URL = 'https://na1.api.riotgames.com/lol/match/v4/matchlists/by-account/{accountId}'
