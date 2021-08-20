@@ -4,6 +4,7 @@ from requests.exceptions import HTTPError
 from helper.api_commons import get_headers, parse_username_tokens
 from helper.riot_abstractions import get_account_info_using_summoner_name
 from helper.riot_api_constants import MATCH_HISTORY_URL
+from helper.embed_constants import BLUE_COLOR, RED_COLOR
 from discord import Embed, Colour
 from discord.ext import commands
 
@@ -57,28 +58,40 @@ class MatchInfo(commands.Cog):
 		except:
 			print('Error fetching username')
 
+
 		gameId = get_most_recent_game_id(username, urlFriendlyUsername)
 		riotMatchData = get_match_data_by_game_id(gameId)
-		embedMatchData = dict()	# Data structure to hold info for embed
 
+		participantId = None
+		summonerName = None
 		for participantData in riotMatchData['participantIdentities']:
 			if participantData['player']['summonerId'] == summonerId:
-				embedMatchData['participantId'] = participantData['participantId']
-				embedMatchData['summonerName'] = participantData['player']['summonerName']
+				participantId= participantData['participantId']
+				summonerName = participantData['player']['summonerName']
 
-		participantData = riotMatchData['participants'][embedMatchData['participantId'] - 1]
+		participantData = riotMatchData['participants'][participantId - 1]
+		mapSide = ('Blue', 'Red')[participantData['teamId'] == 100 ]
+
 		participantStats = participantData['stats']
-		embedMatchData['team'] = ('Blue Side', 'Red Side')[participantData['teamId'] == 100 ]
-		embedMatchData['championId'] = participantData['championId']
-		embedMatchData['kills'] = participantStats['kills']
-		embedMatchData['deaths'] = participantStats['deaths']
-		embedMatchData['assists'] = participantStats['assists']
+		kills = int(participantStats["kills"])
+		deaths = int(participantStats["deaths"])
+		assists = int(participantStats["assists"] )
 
-		matchMessage = Embed(color=Colour.from_rgb(224, 17, 95), title=f'Last Match For { embedMatchData["summonerName"] }')
-		matchMessage.set_thumbnail(url=f'http://ddragon.leagueoflegends.com/cdn/10.3.1/img/champion/{ self.championData[embedMatchData["championId"]]["name"] }.png')
-		matchMessage.add_field(name='Team', value=embedMatchData['team'], inline=False)
-		matchMessage.add_field(name='Score', value=f'{ embedMatchData["kills"] }/{ embedMatchData["deaths"] }/{ embedMatchData["assists"] }', inline=True)
-		matchMessage.add_field(name='KDA', value=float( int(embedMatchData["kills"]) / int(embedMatchData["deaths"]) ))
+
+		matchMessage = Embed(color= (BLUE_COLOR, RED_COLOR)[participantData['teamId'] == 100 ], title=f'Last Match For { summonerName }')
+		matchMessage.set_thumbnail(url=f'http://ddragon.leagueoflegends.com/cdn/10.3.1/img/champion/{ self.championData[participantData["championId"]] ["name"] }.png')
+
+		matchMessage.add_field(name = 'Map Side', value = mapSide, inline = False)
+		matchMessage.add_field(name='Score', value=f'{kills}/{deaths}/{assists}', inline=True)
+		matchMessage.add_field(name='KDA', value=float(kills / deaths))
+		matchMessage.add_field(name = 'Items', value = '![](http://ddragon.leagueoflegends.com/cdn/10.11.1/img/item/1402.png)')
+
+		matchMessage.set_image(url = 'http://ddragon.leagueoflegends.com/cdn/10.11.1/img/item/1402.png')
+		matchMessage.set_image(url = 'http://ddragon.leagueoflegends.com/cdn/10.11.1/img/item/3020.png')
+		matchMessage.set_image(url = 'http://ddragon.leagueoflegends.com/cdn/10.11.1/img/item/3916.png')
+		matchMessage.set_image(url = 'http://ddragon.leagueoflegends.com/cdn/10.11.1/img/item/3101.png')
+		matchMessage.set_image(url = 'http://ddragon.leagueoflegends.com/cdn/10.11.1/img/item/3340.png')
+		# matchMessage.set_image(url = 'http://ddragon.leagueoflegends.com/cdn/10.11.1/img/item/1001.png')
 
 		print(f'Sending {username} their stats for the last game they played.')
 		await context.send(embed=matchMessage)
