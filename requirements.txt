@@ -3,3 +3,4 @@ discord.py
 python-dotenv
 async-timeout
 Flask
+aiohttp>=3.8.0 # not directly required, pinned by Snyk to avoid a vulnerability
