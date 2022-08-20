@@ -2,7 +2,7 @@ import os
 import threading
 from multiprocessing import Process
 
-from discord import Embed, Colour
+from discord import Embed, Colour, Intents
 from discord.ext import commands
 from dotenv import load_dotenv
 import requests
@@ -17,7 +17,7 @@ load_dotenv()
 discordApiToken = os.getenv('DISCORD_TOKEN')
 
 app = Flask(__name__)
-bot = commands.Bot(command_prefix='!')
+bot = commands.Bot(command_prefix='!', intents=Intents.default())
 
 
 @bot.event
@@ -44,14 +44,8 @@ def test():
     return 'API up and running'
 
 
-### Main code segment ###
-if __name__ == '__main__':
-    port = int(os.getenv('PORT', 8081))
-    host = '0.0.0.0'
-
-    threading.Thread(target=app.run, args=(), kwargs={'host': host, 'port': port}).start()
-
-    championData = dict()
+def setup_bot():
+    champion_data = dict()
 
     try:
         url = 'http://ddragon.leagueoflegends.com/cdn/10.3.1/data/en_US/champion.json'
@@ -60,12 +54,22 @@ if __name__ == '__main__':
         riotChampData = r.json()['data']
 
         for name, data in riotChampData.items():
-            championData[int(data['key'])] = {'name': name}
+            champion_data[int(data['key'])] = {'name': name}
 
     except Exception as e:
         print(e)
         print('Err connecting to Riot champion data endpoint')
 
     bot.add_cog(RankedInfo(bot))
-    bot.add_cog(MatchInfo(championData))
+    bot.add_cog(MatchInfo(champion_data))
     bot.run(discordApiToken)
+
+
+### Main code segment ###
+if __name__ == '__main__':
+    port = int(os.getenv('PORT', 8004))
+    host = '0.0.0.0'
+
+    threading.Thread(target=app.run, args=(), kwargs={'host': host, 'port': port}).start()
+
+    setup_bot()
