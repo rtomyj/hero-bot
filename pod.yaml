@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: hero
+  labels:
+    app: hero
+spec:
+  containers:
+  - image: docker.io/rtomyj/hero:latest
+    imagePullPolicy: Always
+    name: hero-override
+    resources: {}
