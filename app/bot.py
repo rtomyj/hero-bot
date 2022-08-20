@@ -2,13 +2,12 @@ import os
 import threading
 from multiprocessing import Process
 
-from discord import Embed, Colour, Intents
+from discord import Intents
 from discord.ext import commands
 from dotenv import load_dotenv
 import requests
 from flask import Flask
 
-from helper import api_commons
 from cogs.ranked_info import RankedInfo
 from cogs.match_info import MatchInfo
 
@@ -51,9 +50,9 @@ def setup_bot():
         url = 'http://ddragon.leagueoflegends.com/cdn/10.3.1/data/en_US/champion.json'
         r = requests.get(url)
 
-        riotChampData = r.json()['data']
+        riot_champ_data = r.json()['data']
 
-        for name, data in riotChampData.items():
+        for name, data in riot_champ_data.items():
             champion_data[int(data['key'])] = {'name': name}
 
     except Exception as e:
