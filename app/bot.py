@@ -46,6 +46,7 @@ def test():
 def setup_bot():
     champion_data = dict()
 
+    print("heeeey")
     try:
         url = 'http://ddragon.leagueoflegends.com/cdn/10.3.1/data/en_US/champion.json'
         r = requests.get(url)
@@ -59,8 +60,11 @@ def setup_bot():
         print(e)
         print('Err connecting to Riot champion data endpoint')
 
+    print("heeeey2")
     bot.add_cog(RankedInfo(bot))
+    print("heeee3")
     bot.add_cog(MatchInfo(champion_data))
+    print("heeee4")
     bot.run(discordApiToken)
 
 
