@@ -12,8 +12,6 @@ class RankedInfo(commands.Cog):
 		self.RANK_ICON_URL_TEMPLATE = 'https://opgg-static.akamaized.net/images/medals/%s_%s.png'
 		self.EMBED_COLOR = Colour.from_rgb(224, 17, 95)
 
-
-
 	def get_ranked_results(self, username, userId, request):
 		REQUEST_maps_QUEUE_TYPE = {'solo': 'RANKED_SOLO_5x5', 'flex': 'RANKED_FLEX_SR'}
 
@@ -46,14 +44,16 @@ class RankedInfo(commands.Cog):
 
 		return soloRankRecordEmbed
 
-
+	@commands.Cog.listener()
+	async def on_ready(self):
+		print('Rank Cog Online')
 
 	@commands.command(name='rank-solo')
 	async def rank_solo(self, context, *usernameTokens):
-		username, urlFriendlyUsername = parse_username_tokens(usernameTokens)
+		username, url_friendly_username = parse_username_tokens(usernameTokens)
 
 
-		url = f'https://na1.api.riotgames.com/lol/summoner/v4/summoners/by-name/{ urlFriendlyUsername }'
+		url = f'https://na1.api.riotgames.com/lol/summoner/v4/summoners/by-name/{ url_friendly_username }'
 		print(f'Using {url} to get summoner ID')
 
 		req = requests.get(url, headers = get_headers())
@@ -70,7 +70,7 @@ class RankedInfo(commands.Cog):
 				print(f'Error retreiving {username} rank results. Err = { e }')
 				await context.send(f'{username} does not have Solo/Duo Rank games.')
 				return
-		except KeyError as exception:
+		except KeyError as r:
 			if r.status_code == 403:
 				print('Riot API has expired.')
 				await context.send(f'Error connecting to riot servers.')

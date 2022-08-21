@@ -8,12 +8,12 @@ def get_headers():
 		}
 
 
-def parse_username_tokens(usernameTokens):
+def parse_username_tokens(username_tokens):
 	username = ''
 
-	for token in usernameTokens:
+	for token in username_tokens:
 		username += f'{token} '
 
 	username = username.rstrip()
-	urlFriendlyUsername = username.replace(' ', '%20')
-	return username, urlFriendlyUsername
+	url_friendly_username = username.replace(' ', '%20')
+	return username, url_friendly_username
