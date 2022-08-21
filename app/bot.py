@@ -60,7 +60,7 @@ async def setup_bot():
     champion_data = dict()
 
     try:
-        url = 'http://ddragon.leagueoflegends.com/cdn/12.15.1/data/en_US/champion.json'
+        url = 'https://ddragon.leagueoflegends.com/cdn/12.15.1/data/en_US/champion.json'
         r = requests.get(url)
 
         riot_champ_data = r.json()['data']

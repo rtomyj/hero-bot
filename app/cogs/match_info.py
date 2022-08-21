@@ -76,19 +76,19 @@ class MatchInfo(commands.Cog):
 		assists = int(user_match_data["assists"])
 
 		match_message = Embed(color = (BLUE_COLOR, RED_COLOR)[team_id == 100], title=f'Last Match For { account_name }')
-		match_message.set_thumbnail(url=f'http://ddragon.leagueoflegends.com/cdn/12.15.1/img/champion/{ self.champion_data[user_match_data["championId"]] ["name"] }.png')
+		match_message.set_thumbnail(url=f'https://ddragon.leagueoflegends.com/cdn/12.15.1/img/champion/{ self.champion_data[user_match_data["championId"]] ["name"] }.png')
 
 		match_message.add_field(name='Map Side', value=map_side, inline=False)
 		match_message.add_field(name='Score', value=f'{kills}/{deaths}/{assists}', inline=True)
 		match_message.add_field(name='KDA', value=float(kills / deaths))
 
-		# match_message.add_field(name='Items', value='![d](http://ddragon.leagueoflegends.com/cdn/10.11.1/img/item/1402.png)')
+		# match_message.add_field(name='Items', value='![d](https://ddragon.leagueoflegends.com/cdn/10.11.1/img/item/1402.png)')
 		#
-		# match_message.set_image(url='http://ddragon.leagueoflegends.com/cdn/10.11.1/img/item/1402.png')
-		# match_message.set_image(url='http://ddragon.leagueoflegends.com/cdn/10.11.1/img/item/3020.png')
-		# match_message.set_image(url='http://ddragon.leagueoflegends.com/cdn/10.11.1/img/item/3916.png')
-		# match_message.set_image(url='http://ddragon.leagueoflegends.com/cdn/10.11.1/img/item/3101.png')
-		# match_message.set_image(url='http://ddragon.leagueoflegends.com/cdn/10.11.1/img/item/3340.png')
-		# match_message.set_image(url='http://ddragon.leagueoflegends.com/cdn/10.11.1/img/item/1001.png')
+		# match_message.set_image(url='https://ddragon.leagueoflegends.com/cdn/10.11.1/img/item/1402.png')
+		# match_message.set_image(url='https://ddragon.leagueoflegends.com/cdn/10.11.1/img/item/3020.png')
+		# match_message.set_image(url='https://ddragon.leagueoflegends.com/cdn/10.11.1/img/item/3916.png')
+		# match_message.set_image(url='https://ddragon.leagueoflegends.com/cdn/10.11.1/img/item/3101.png')
+		# match_message.set_image(url='https://ddragon.leagueoflegends.com/cdn/10.11.1/img/item/3340.png')
+		# match_message.set_image(url='https://ddragon.leagueoflegends.com/cdn/10.11.1/img/item/1001.png')
 
 		await context.send(embed=match_message)
