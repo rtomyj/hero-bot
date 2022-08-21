@@ -48,12 +48,16 @@ def setup_bot():
 
     print("heeeey")
     try:
+        print("xxxx")
         url = 'http://ddragon.leagueoflegends.com/cdn/10.3.1/data/en_US/champion.json'
         r = requests.get(url)
+        print("yyy")
 
         riot_champ_data = r.json()['data']
+        print("zzzz")
 
         for name, data in riot_champ_data.items():
+            print(name)
             champion_data[int(data['key'])] = {'name': name}
 
     except Exception as e:
