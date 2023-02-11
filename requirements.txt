@@ -6,6 +6,6 @@ Flask==2.2.2
 pip==23.0
 wheel==0.38.4
 pathlib==1.0.1
-setuptools==67.1.0
+setuptools==67.2.0
 nest_asyncio
 aiohttp>=3.8.0 # not directly required, pinned by Snyk to avoid a vulnerability
