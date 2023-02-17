@@ -3,7 +3,7 @@ discord.py
 python-dotenv==0.21.1
 async-timeout
 Flask==2.2.3
-pip==23.0
+pip==23.0.1
 wheel==0.38.4
 pathlib==1.0.1
 setuptools==67.3.2
