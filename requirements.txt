@@ -1,6 +1,6 @@
 requests==2.31.0
 discord.py
-python-dotenv==1.0.0
+python-dotenv==1.0.1
 async-timeout
 Flask==2.3.2
 pip==23.1.2
