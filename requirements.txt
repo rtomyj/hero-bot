@@ -4,7 +4,7 @@ python-dotenv==1.0.1
 async-timeout
 Flask==2.3.2
 pip==23.3
-wheel==0.40.0
+wheel==0.43.0
 pathlib==1.0.1
 setuptools==67.8.0
 nest_asyncio
